@@ -1,0 +1,4 @@
+#网址：https://gaokao.chsi.com.cn/sch/search--ss-on,option-qg,searchType-1,start-0.dhtmlr
+imports requests
+r = requests.get("https://gaokao.chsi.com.cn/sch/search--ss-on,option-qg,searchType-1,start-0.dhtmlr")
+demo = r.text
