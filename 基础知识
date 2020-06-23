@@ -25,7 +25,22 @@ print("这是变量：",a)
 #查看关键字，只能在python环境中查看
 import keyword
 keyword.kwlist
-
+# %s 字符串 %d 十进制整数
+print("我的名字是%s,我的国籍是%s"%("小张","中国"))
 #格式化输出
 age = 18
 print("我的年纪是:%d岁"%age)
+%s
+
+#if,elif,else语句
+score = 77
+if score >= 90 and score <= 100:
+    print("本次考试,等级为A")
+elif score >=80:
+    print("本次考试,等级为B")
+elif score >=70:
+    print("本次考试，等级为C")
+elif score >=60:
+    print("本次考试，等级为D")
+else:
+    print("本次考试，等级为E")#也可以直接用elif
