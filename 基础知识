@@ -21,3 +21,11 @@ a = 10
 print(a)
 
 print("这是变量：",a)
+
+#查看关键字，只能在python环境中查看
+import keyword
+keyword.kwlist
+
+#格式化输出
+age = 18
+print("我的年纪是:%d岁"%age)
