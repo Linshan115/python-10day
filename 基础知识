@@ -1,1 +1,23 @@
+pycharm
+#-*- codeind = utf-8 -*-
+#@Time : 2020/6/23 15:14
+#@Author : ShanLin
+#@File : demo1.py
+#@Software: PyCharm
 
+#这是我的第一个python程序
+print("hello,world")    #这是单行注释
+
+'''
+这是第一行注释
+这是第二行注释
+
+'''
+
+print("标准化输出字符串")
+
+a = 10
+
+print(a)
+
+print("这是变量：",a)
