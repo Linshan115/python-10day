@@ -1,0 +1,104 @@
+from bs4 import BeautifulSoup     #网页解析，获取数据
+import re       #正则表达式，进行文字匹配
+import urllib.request,urllib.error      #制定url,获取网页数据
+import xlwt     #进行excel操作
+import sqlite3  #进行SQLite数据库操作
+import xlrd
+
+findpdf = re.compile(r'<a href=".(.*?)" target="_blank">')
+findname = re.compile(r'target="_blank">(.*?)</a></div>')
+
+def main():
+    baseurl = "http://www.cnnic.cn/hlwfzyj/hlwxzbg/index.htm"
+    datalist = geturl(baseurl)
+    savepath = ".\\demo1.xls"
+    saveurl(datalist, savepath)
+
+
+
+def askurl(baseurl):
+    head = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36"
+    }
+    request = urllib.request.Request(baseurl,headers = head)
+    responce = urllib.request.urlopen(request)
+    html = ""
+    try:
+        responce = urllib.request.urlopen(request)
+        html = responce.read().decode("utf-8")
+    except urllib.error.URLError as e:
+        if hasattr(e, "code"):
+            print(e.code)
+        if hasattr(e, "reason"):
+            print(e.reason)
+
+    return html
+
+def geturl(baseurl):
+    datalist = []
+    html = askurl(baseurl)
+    soup = BeautifulSoup(html,"html.parser")
+    for item in soup.find_all('div',class_= "link"):
+        data1 = []
+        item = str(item)
+        pdf = re.findall(findpdf,item)[0]
+        data1.append(pdf)
+        name = re.findall(findname,item)[0]
+        data1.append(name)
+        datalist.append(data1)
+    for i in range(0,6):
+        url = "http://www.cnnic.cn/hlwfzyj/hlwxzbg/index_"+str(i+1)+".htm"
+        html = askurl(url)
+        soup = BeautifulSoup(html, "html.parser")
+        for item in soup.find_all('div', class_="link"):
+            data2 = []
+            item = str(item)
+            pdf = re.findall(findpdf, item)[0]
+            data2.append(pdf)
+            name = re.findall(findname, item)[0]
+            data2.append(name)
+            datalist.append(data2)
+    print(len(datalist))
+    return datalist
+
+
+def saveurl(datalist,savepath):
+    workbook = xlwt.Workbook(encoding="utf-8")
+    worksheet = workbook.add_sheet('sheet1')
+    col = ("文件链接", "文件名")
+    for i in range(0, 2):
+        worksheet.write(0, i, col[i])
+    for i in range(0, 153):
+        data = datalist[i]
+        for j in range(0, 2):
+            worksheet.write(i + 1, j, data[j])
+    workbook.save(savepath)
+
+def main():
+    downloadpdf(downurl)
+
+downurl = "http://www.cnnic.cn/hlwfzyj/hlwxzbg/"
+file = xlrd.open_workbook("demo1.xls")
+sheet = file.sheets()[0]
+
+def downloadpdf(downurl):
+    for i in range(1,154):
+        for j in range(0,i+1):
+            addurl = sheet.cell(i, 0).value
+            name = sheet.cell(i, 1).value
+            downpdfurl = downurl + addurl
+            filename = "%s.pdf"%name
+            head = {
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36"
+            }
+            responce = urllib.request.Request(downpdfurl, headers=head)
+            u = urllib.request.urlopen(responce)
+            f = open(filename, 'wb')
+            block_sz = 8192
+            while True:
+                buffer = u.read(block_sz)
+                if not buffer:
+                    break
+                print('=====结束==========')
+                f.write(buffer)
+            f.close()
