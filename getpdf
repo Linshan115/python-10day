@@ -1,0 +1,56 @@
+import requests
+import xlrd
+import urllib
+from pdfminer.pdfinterp import PDFResourceManager, process_pdf
+from pdfminer.converter import TextConverter
+from pdfminer.layout import LAParams
+from io import StringIO
+from io import open
+
+baseurl = "http://www.chinaclear.cn/"
+file = xlrd.open_workbook("文件链接.xls")
+sheet = file.sheets()[0]               #获取第一张表格
+#sheet = file.sheet_by_name("表名")      #获取指定名字的表格R
+# 获取表格的总行数：sheet.nrows
+#
+# 获取表格的总列数：sheet.ncols
+#
+# 获取指定行的数据：sheet.row_values(下标值)，sheet.row_values(0, 1, 3)
+# 表示从去第2, 3, 4
+# 行的值
+#
+# 获取指定行的数据：sheet.col_values(下标值)
+#
+# 获取指定单元格数据：sheet.cell(a, b).value
+# a表示行的下标值，b表示列的下标值；两者可以调换位置；注意：不加.value取出的值前面会带个text的东西
+# def readPDF(respnce):
+#     rsrcmgr = PDFResourceManager()
+#     retstr = StringIO()
+#     laparams = LAParams()
+#     device = TextConverter(rsrcmgr, retstr, laparams=laparams)
+#     process_pdf(rsrcmgr, device, response)
+#     device.close()
+#     content = retstr.getvalue()
+#     retstr.close()
+#     return content
+
+for i in range(1,17):
+    addurl= sheet.cell(i,0).value
+    name = sheet.cell(i,1).value
+    addurl = str(addurl)
+    url = baseurl + addurl
+    filename = "%s.pdf"%name
+    head = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.106 Safari/537.36"
+    }
+    responce = urllib.request.Request(url,headers=head)
+    u = urllib.request.urlopen(responce)
+    f = open(filename, 'wb')
+    block_sz = 8192
+    while True:
+        buffer = u.read(block_sz)
+        if not buffer:
+            break
+        print('=====结束==========')
+        f.write(buffer)
+    f.close()
